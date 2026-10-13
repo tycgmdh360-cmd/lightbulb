@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Изобретения — программа</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Linux Libertine', 'Georgia', 'Times', serif;
+            background: linear-gradient(135deg, #e8eaf6 0%, #f6f6f6 100%);
+            color: #202122;
+            line-height: 1.7;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 0 30px rgba(0,0,0,0.12);
+            min-height: 100vh;
+            padding: 0 20px 40px;
+            border-radius: 0 0 8px 8px;
+        }
+        header {
+            padding: 20px 0;
+            border-bottom: 2px solid #36c;
+            background: linear-gradient(90deg, #ffffff 0%, #f0f4ff 100%);
+        }
+        .logo {
+            font-size: 2.2rem;
+            font-weight: normal;
+            font-family: 'Linux Libertine', 'Georgia', serif;
+        }
+        .logo span { color: #36c; }
+
+        /* Вкладки разделов */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin: 20px 0 0;
+            border-bottom: 3px solid #36c;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 14px 26px;
+            background: #f0f4ff;
+            border: 2px solid #c5cae9;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+            font-size: 1rem;
+            cursor: pointer;
+            color: #2a4b8d;
+            font-family: inherit;
+            font-weight: 600;
+            transition: all 0.25s;
+            margin-bottom: -3px;
+            position: relative;
+        }
+        .tab:hover {
+            background: #e3f2fd;
+            transform: translateY(-2px);
+        }
+        .tab.active {
+            background: linear-gradient(180deg, #ffffff 0%, #f0f4ff 100%);
+            border-color: #36c;
+            border-bottom: 3px solid #ffffff;
+            color: #7b1fa2;
+            box-shadow: 0 -4px 12px rgba(54, 108, 204, 0.15);
+        }
+
+        /* Секции */
+        .section { display: none; }
+        .section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Заголовки */
+        h1 {
+            font-size: 2.4rem;
+            font-weight: normal;
+            font-family: 'Linux Libertine', 'Georgia', serif;
+            background: linear-gradient(90deg, #36c 0%, #7b1fa2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-bottom: 2px solid #36c;
+            padding-bottom: 10px;
+            margin: 25px 0 20px;
+        }
+        h2 {
+            font-size: 1.7rem;
+            font-weight: normal;
+            font-family: 'Linux Libertine', 'Georgia', serif;
+            color: #2a4b8d;
+            border-bottom: 2px solid #7b1fa2;
+            padding-bottom: 6px;
+            margin: 35px 0 18px;
+            position: relative;
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 80px;
+            height: 2px;
+            background: #ff9800;
+        }
+        h3 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 20px 0 10px;
+            color: #4a148c;
+        }
+        p { margin-bottom: 16px; font-size: 1.02rem; }
+        ul, ol { margin: 10px 0 22px 25px; }
+        li { margin-bottom: 10px; }
+        b { color: #2a4b8d; }
+        em { color: #7b1fa2; font-style: italic; }
+
+        /* Инфобокс */
+        .infobox {
+            float: right;
+            width: 320px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8eaf6 100%);
+            border: 2px solid #36c;
+            padding: 15px;
+            margin: 0 0 20px 25px;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(54, 108, 204, 0.15);
+        }
+        .infobox h3 { text-align: center; margin-top: 0; font-size: 1.1rem; color: #2a4b8d; }
+        .infobox .img-box {
+            background: #fff;
+            border: 1px solid #c8ccd1;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            padding: 5px;
+            text-align: center;
+        }
+        .infobox .img-box svg { width: 100%; height: 200px; display: block; }
+        .infobox table { width: 100%; border-collapse: collapse; }
+        .infobox td {
+            padding: 6px 0;
+            vertical-align: top;
+            border-bottom: 1px solid #d1d9e6;
+        }
+        .infobox td:first-child { font-weight: bold; width: 40%; color: #2a4b8d; }
+
+        /* Галерея */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 22px;
+            margin: 22px 0;
+        }
+        .gallery-item {
+            background: linear-gradient(180deg, #ffffff 0%, #f0f4ff 100%);
+            border: 2px solid #c5cae9;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+        }
+        .gallery-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(54, 108, 204, 0.25);
+            border-color: #36c;
+        }
+        .gallery-item .img-box { background: #fff; padding: 8px; }
+        .gallery-item .img-box svg { width: 100%; height: 180px; display: block; }
+        .gallery-item .caption {
+            padding: 12px;
+            font-size: 0.88rem;
+            text-align: center;
+            color: #37474f;
+            font-weight: 500;
+        }
+
+        /* Видео */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+            margin: 22px 0;
+        }
+        .video-item {
+            background: linear-gradient(180deg, #ffffff 0%, #f0f4ff 100%);
+            border: 2px solid #c5cae9;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+        }
+        .video-item:hover { box-shadow: 0 8px 25px rgba(54, 108, 204, 0.2); }
+        .video-item iframe { width: 100%; height: 250px; border: none; display: block; }
+        .video-item .video-caption {
+            padding: 14px;
+            font-size: 0.92rem;
+            text-align: center;
+            color: #37474f;
+            font-weight: 500;
+        }
+
+        /* Хронология */
+        .timeline { position: relative; padding-left: 40px; margin: 35px 0; }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px; top: 0; bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #36c 0%, #7b1fa2 100%);
+            border-radius: 2px;
+        }
+        .timeline-item { position: relative; margin-bottom: 32px; padding-left: 22px; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -34px; top: 6px;
+            width: 16px; height: 16px;
+            background: linear-gradient(135deg, #36c 0%, #7b1fa2 100%);
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 3px #36c;
+            transition: transform 0.3s;
+        }
+        .timeline-item:hover::before { transform: scale(1.3); }
+        .timeline-item .year {
+            font-weight: bold;
+            background: linear-gradient(90deg, #36c 0%, #7b1fa2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+        }
+        .timeline-item .event { font-size: 0.98rem; color: #37474f; }
+
+        /* Карточки изобретателей */
+        .inventors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 22px;
+            margin: 22px 0;
+        }
+        .inventor-card {
+            background: linear-gradient(180deg, #ffffff 0%, #e8eaf6 100%);
+            border: 2px solid #c5cae9;
+            border-radius: 10px;
+            padding: 22px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .inventor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(54, 108, 204, 0.2);
+        }
+        .inventor-card .portrait {
+            width: 150px; height: 150px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #36c;
+            box-shadow: 0 4px 12px rgba(54, 108, 204, 0.3);
+        }
+        .inventor-card .portrait svg { width: 100%; height: 100%; display: block; }
+        .inventor-card h4 { font-size: 1.15rem; margin-bottom: 5px; color: #2a4b8d; }
+        .inventor-card .years {
+            color: #7b1fa2;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .inventor-card p { font-size: 0.92rem; text-align: left; color: #37474f; }
+
+        /* Факты */
+        .facts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 22px;
+            margin: 22px 0;
+        }
+        .fact-card {
+            background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+            border: 2px solid #9fa8da;
+            border-radius: 10px;
+            padding: 22px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .fact-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(54, 108, 204, 0.25);
+        }
+        .fact-card .fact-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .fact-card .fact-number {
+            font-size: 2.1rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #36c 0%, #7b1fa2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+        }
+        .fact-card .fact-label { font-size: 0.9rem; color: #37474f; margin-top: 6px; }
+
+        /* Кнопка наверх */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px; right: 30px;
+            background: linear-gradient(135deg, #36c 0%, #7b1fa2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 52px; height: 52px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(54, 108, 204, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            z-index: 100;
+        }
+        .back-to-top:hover {
+            transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(54, 108, 204, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .infobox { float: none; width: 100%; margin: 0 0 20px 0; }
+            .video-grid { grid-template-columns: 1fr; }
+            .back-to-top { bottom: 20px; right: 20px; width: 44px; height: 44px; font-size: 1.2rem; }
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.4rem; }
+            .tab { padding: 10px 16px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="top">
+        <header>
+            <div class="logo">Вики<span>педия</span></div>
+        </header>
+
+        <!-- ВКЛАДКИ РАЗДЕЛОВ -->
+        <nav class="tabs">
+            <button class="tab active" data-tab="lamps">💡 Изобретение лампочки</button>
+            <button class="tab" data-tab="mach">⚙️ Машиностроение</button>
+        </nav>
+
+        <!-- ============================================= -->
+        <!-- РАЗДЕЛ 1: ЛАМПОЧКА                            -->
+        <!-- ============================================= -->
+        <div id="lamps" class="section active">
+            <h1>Лампа накаливания: история изобретения</h1>
+
+            <div class="infobox">
+                <h3>💡 Лампа накаливания</h3>
+                <div class="img-box">
+                    <!-- ИСПРАВЛЕННЫЙ SVG ЛАМПОЧКИ: линии не пересекают контур -->
+                    <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="ib-glass" cx="40%" cy="35%">
+                                <stop offset="0%" stop-color="#fffde7"/>
+                                <stop offset="55%" stop-color="#ffe082"/>
+                                <stop offset="100%" stop-color="#b0bec5"/>
+                            </radialGradient>
+                            <linearGradient id="ib-base" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stop-color="#bdbdbd"/>
+                                <stop offset="50%" stop-color="#f5f5f5"/>
+                                <stop offset="100%" stop-color="#9e9e9e"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- стеклянная колба -->
+                        <ellipse cx="50" cy="75" rx="38" ry="48" fill="url(#ib-glass)" stroke="#90a4ae" stroke-width="2"/>
+                        <!-- нить накала — аккуратный зигзаг -->
+                        <path d="M 38 82 L 44 58 L 50 82 L 56 58 L 62 82" stroke="#f57f17" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+                        <!-- поддержки нити (не пересекают колбу) -->
+                        <line x1="38" y1="82" x2="38" y2="118" stroke="#90a4ae" stroke-width="1"/>
+                        <line x1="62" y1="82" x2="62" y2="118" stroke="#90a4ae" stroke-width="1"/>
+                        <!-- шейка -->
+                        <rect x="38" y="118" width="24" height="10" fill="#cfd8dc" stroke="#90a4ae" stroke-width="1"/>
+                        <!-- цоколь -->
+                        <rect x="36" y="128" width="28" height="36" fill="url(#ib-base)" stroke="#616161" stroke-width="1" rx="2"/>
+                        <!-- насечки на цоколе — короткие, ВНУТРИ контура, не касаются краёв -->
+                        <line x1="41" y1="136" x2="59" y2="136" stroke="#757575" stroke-width="1"/>
+                        <line x1="41" y1="144" x2="59" y2="144" stroke="#757575" stroke-width="1"/>
+                        <line x1="41" y1="152" x2="59" y2="152" stroke="#757575" stroke-width="1"/>
+                        <!-- контакт -->
+                        <rect x="44" y="164" width="12" height="10" fill="#424242" rx="2"/>
+                    </svg>
+                </div>
+                <table>
+                    <tr><td>Тип:</td><td>Электрический источник света</td></tr>
+                    <tr><td>Первый патент:</td><td>1874 г. (А. Н. Лодыгин)</td></tr>
+                    <tr><td>Коммерческое внедрение:</td><td>1879 г. (Т. Эдисон)</td></tr>
+                    <tr><td>Принцип:</td><td>Накаливание проводника</td></tr>
+                    <tr><td>Нить накала:</td><td>Вольфрам</td></tr>
+                </table>
+            </div>
+
+            <h2>Введение</h2>
+            <p><b>Лампа накаливания</b> — это <em>электрический источник света</em>, принцип действия которого основан на преобразовании электрической энергии в световую путём нагрева специального проводника (нити накала) до высокой температуры. Это изобретение стало <b>одним из самых значимых</b> в истории человечества, кардинально изменив жизнь людей и положив начало эпохе электрификации.</p>
+            <p>Хотя многие привыкли считать «отцом» лампочки <em>Томаса Эдисона</em>, на самом деле история её создания — это <b>результат работы множества учёных</b> и изобретателей из разных стран. Первые прототипы появились ещё в начале XIX века, а надёжную и долговечную лампу удалось создать лишь в <b>1870-х годах</b>.</p>
+
+            <h2>Хронология изобретения</h2>
+            <div class="timeline">
+                <div class="timeline-item"><div class="year">⚡ 1800</div><div class="event">Хамфри Дэви (Англия) создал <b>первую электрическую дугу</b>, пропустив ток через угольные стержни. Это стало отправной точкой в поисках электрического освещения.</div></div>
+                <div class="timeline-item"><div class="year">⚡ 1802</div><div class="event">Профессор Василий Петров (Россия) открыл явление электрической дуги, что заложило основы для дальнейших экспериментов с электрическим светом.</div></div>
+                <div class="timeline-item"><div class="year">⚡ 1840</div><div class="event">Уоррен де ла Рю (Англия) создал лампу с <em>платиновой нитью</em> в вакуумной стеклянной колбе. Конструкция работала, но платина была слишком дорогой.</div></div>
+                <div class="timeline-item"><div class="year">💡 1874</div><div class="event"><b>Александр Лодыгин</b> (Россия) получил патент №1619 на лампу с угольным стержнем в вакууме. Его лампы горели около <b>40 минут</b>, а позже — до 700–1000 часов.</div></div>
+                <div class="timeline-item"><div class="year">💡 1878</div><div class="event">Джозеф Уилсон Суон (Англия) создал лампу с угольным волокном, которая давала яркое свечение.</div></div>
+                <div class="timeline-item"><div class="year">💡 1879</div><div class="event"><b>Томас Эдисон</b> (США) запатентовал лампу с угольной нитью, которая горела <b>40 часов</b>. Он также разработал цоколь, патрон и выключатель, что позволило наладить массовое производство.</div></div>
+                <div class="timeline-item"><div class="year">🔬 1890-е</div><div class="event">Александр Лодыгин предложил использовать нити из тугоплавких металлов — <em>вольфрама и молибдена</em>, что значительно увеличило срок службы ламп.</div></div>
+                <div class="timeline-item"><div class="year">🏭 1906</div><div class="event">Лодыгин продал патент на вольфрамовую нить компании <b>General Electric</b>. Вольфрамовая нить стала стандартом для ламп накаливания на многие десятилетия.</div></div>
+            </div>
+
+            <h2>Ключевые изобретатели</h2>
+            <div class="inventors-grid">
+                <div class="inventor-card">
+                    <div class="portrait">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs><linearGradient id="p1-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e3f2fd"/><stop offset="100%" stop-color="#90caf9"/></linearGradient></defs>
+                            <rect width="100" height="100" fill="url(#p1-bg)"/>
+                            <circle cx="50" cy="42" r="20" fill="#ffcc80"/>
+                            <path d="M 30 32 Q 50 15 70 32 Q 68 22 50 22 Q 32 22 30 32 Z" fill="#5d4037"/>
+                            <path d="M 18 100 Q 18 72 50 72 Q 82 72 82 100 Z" fill="#37474f"/>
+                            <path d="M 42 72 L 50 90 L 58 72" stroke="#fff" stroke-width="2" fill="none"/>
+                            <text x="50" y="96" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="bold">А.Л.</text>
+                        </svg>
+                    </div>
+                    <h4>Александр Лодыгин</h4>
+                    <div class="years">1847–1923</div>
+                    <p>Русский электротехник, создатель <b>первой практически применимой</b> лампы накаливания. В 1874 году получил патент на лампу с угольным стержнем в вакууме. Позже предложил использовать вольфрам и молибден.</p>
+                </div>
+                <div class="inventor-card">
+                    <div class="portrait">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs><linearGradient id="p2-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff3e0"/><stop offset="100%" stop-color="#ffb74d"/></linearGradient></defs>
+                            <rect width="100" height="100" fill="url(#p2-bg)"/>
+                            <circle cx="50" cy="42" r="20" fill="#ffcc80"/>
+                            <path d="M 32 35 Q 50 20 68 35 Q 65 28 50 28 Q 35 28 32 35 Z" fill="#8d6e63"/>
+                            <path d="M 18 100 Q 18 72 50 72 Q 82 72 82 100 Z" fill="#263238"/>
+                            <text x="50" y="96" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="bold">Т.Э.</text>
+                        </svg>
+                    </div>
+                    <h4>Томас Эдисон</h4>
+                    <div class="years">1847–1931</div>
+                    <p>Американский изобретатель и предприниматель. В 1879 году запатентовал лампу с угольной нитью и наладил её <b>массовое производство</b>. Также разработал цоколь и патрон.</p>
+                </div>
+                <div class="inventor-card">
+                    <div class="portrait">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs><linearGradient id="p3-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e8f5e9"/><stop offset="100%" stop-color="#81c784"/></linearGradient></defs>
+                            <rect width="100" height="100" fill="url(#p3-bg)"/>
+                            <circle cx="50" cy="42" r="20" fill="#ffcc80"/>
+                            <path d="M 30 34 Q 50 18 70 34 Q 66 24 50 24 Q 34 24 30 34 Z" fill="#6d4c41"/>
+                            <path d="M 36 52 Q 50 62 64 52 Q 62 60 50 62 Q 38 60 36 52 Z" fill="#6d4c41"/>
+                            <path d="M 18 100 Q 18 72 50 72 Q 82 72 82 100 Z" fill="#37474f"/>
+                            <text x="50" y="96" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="bold">Д.С.</text>
+                        </svg>
+                    </div>
+                    <h4>Джозеф Уилсон Суон</h4>
+                    <div class="years">1828–1914</div>
+                    <p>Английский физик и химик. В 1878 году создал лампу с угольным волокном, а в 1880-х годах совместно с Эдисоном основал <b>компанию по производству ламп</b>.</p>
+                </div>
+            </div>
+
+            <h2>Как это работает</h2>
+            <p>Принцип работы лампы накаливания <em>довольно прост</em>:</p>
+            <ol>
+                <li><b>Электрический ток</b> проходит через нить накала, сделанную из тугоплавкого металла (обычно вольфрама).</li>
+                <li><b>Нить нагревается</b> до температуры около <em>2000–3000 °C</em>.</li>
+                <li><b>Раскалённый металл</b> начинает излучать свет — это явление называется <em>тепловым излучением</em>.</li>
+                <li><b>Стеклянная колба</b> заполнена инертным газом или вакуумом, чтобы нить не окислялась и не перегорала.</li>
+            </ol>
+
+            <h2>Видео об изобретении лампочки</h2>
+            <div class="video-grid">
+                <div class="video-item">
+                    <iframe src="https://rutube.ru/play/embed/1b477e1940ec5a1a8e114fce29fd075b" title="Лампочка" allowfullscreen></iframe>
+                    <div class="video-caption">🎬 Лампочка: Как изобретение света изменило мир</div>
+                </div>
+                <div class="video-item">
+                    <iframe src="https://rutube.ru/play/embed/48c7f83e29f5c93db0e24b7511b3d99d" title="Лодыгин" allowfullscreen></iframe>
+                    <div class="video-caption">🎬 Этюды о Великом. Александр Лодыгин — создатель лампы накаливания</div>
+                </div>
+            </div>
+
+            <h2>Галерея изображений</h2>
+            <div class="gallery-grid">
+
+                <div class="gallery-item">
+                    <div class="img-box">
+                        <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs><radialGradient id="g1g" cx="40%" cy="35%"><stop offset="0%" stop-color="#fffde7"/><stop offset="55%" stop-color="#ffe082"/><stop offset="100%" stop-color="#b0bec5"/></radialGradient></defs>
+                            <ellipse cx="50" cy="75" rx="38" ry="48" fill="url(#g1g)" stroke="#90a4ae" stroke-width="2"/>
+                            <path d="M 38 82 L 44 58 L 50 82 L 56 58 L 62 82" stroke="#f57f17" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+                            <line x1="38" y1="82" x2="38" y2="118" stroke="#90a4ae" stroke-width="1"/>
+                            <line x1="62" y1="82" x2="62" y2="118" stroke="#90a4ae" stroke-width="1"/>
+                            <rect x="38" y="118" width="24" height="10" fill="#cfd8dc" stroke="#90a4ae" stroke-width="1"/>
+                            <rect x="36" y="128" width="28" height="36" fill="#bdbdbd" stroke="#616161" stroke-width="1" rx="2"/>
+                            <line x1="41" y1="136" x2="59" y2="136" stroke="#757575" stroke-width="1"/>
+                            <line x1="41" y1="144" x2="59" y2="144" stroke="#757575" stroke-width="1"/>
+                            <line x1="41" y1="152" x2="59" y2="152" stroke="#757575" stroke-width="1"/>
+                            <rect x="44" y="164" width="12" height="10" fill="#424242" rx="2"/>
+                        </svg>
+                    </div>
+                    <div class="caption">💡 Современная лампа накаливания</div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="img-box">
+                        <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs><radialGradient id="g2g" cx="40%" cy="35%"><stop offset="0%" stop-color="#fff9c4"/><stop offset="60%" stop-color="#ffb74d"/><stop offset="100%" stop-color="#8d6e63"/></radialGradient></defs>
+                            <ellipse cx="50" cy="75" rx="36" ry="50" fill="url(#g2g)" stroke="#795548" stroke-width="2"/>
+                            <path d="M 36 75 L 42 55 L 48 75 L 54 55 L 60 75" stroke="#3e2723" stroke-width="2" fill="none"/>
+                            <line x1="36" y1="75" x2="36" y2="122" stroke="#795548" stroke-width="1"/>
+                            <line x1="60" y1="75" x2="60" y2="122" stroke="#795548" stroke-width="1"/>
+                            <rect x="38" y="122" width="24" height="8" fill="#a1887f" stroke="#4e342e" stroke-width="1"/>
+                            <rect x="36" y="130" width="28" height="34" fill="#8d6e63" stroke="#4e342e" stroke-width="1" rx="2"/>
+                            <line x1="41" y1="138" x2="59" y2="138" stroke="#5d4037" stroke-width="1"/>
+                            <line x1="41" y1="146" x2="59" y2="146" stroke="#5d4037" stroke-width="1"/>
+                            <line x1="41" y1="154" x2="59" y2="154" stroke="#5d4037" stroke-width="1"/>
+                            <rect x="44" y="165" width="12" height="10" fill="#3e2723" rx="2"/>
+                        </svg>
+                    </div>
+                    <div class="caption">💡 Лампа Томаса Эдисона (1879 г.)</div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="img-box">
+                        <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs><radialGradient id="g3g" cx="45%" cy="35%"><stop offset="0%" stop-color="#e1f5fe"/><stop offset="60%" stop-color="#81d4fa"/><stop offset="100%" stop-color="#546e7a"/></radialGradient></defs>
+                            <circle cx="50" cy="80" r="42" fill="url(#g3g)" stroke="#455a64" stroke-width="2"/>
+                            <line x1="50" y1="55" x2="50" y2="105" stroke="#212121" stroke-width="4"/>
+                            <circle cx="50" cy="80" r="6" fill="#ffeb3b" opacity="0.7"/>
+                            <rect x="38" y="120" width="24" height="10" fill="#607d8b" stroke="#37474f" stroke-width="1"/>
+                            <rect x="36" y="130" width="28" height="34" fill="#90a4ae" stroke="#37474f" stroke-width="1" rx="2"/>
+                            <line x1="41" y1="138" x2="59" y2="138" stroke="#546e7a" stroke-width="1"/>
+                            <line x1="41" y1="146" x2="59" y2="146" stroke="#546e7a" stroke-width="1"/>
+                            <line x1="41" y1="154" x2="59" y2="154" stroke="#546e7a" stroke-width="1"/>
+                            <rect x="44" y="165" width="12" height="10" fill="#263238" rx="2"/>
+                        </svg>
+                    </div>
+                    <div class="caption">💡 Лампа Александра Лодыгина (1874 г.)</div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="img-box">
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs><radialGradient id="g4g" cx="50%" cy="50%"><stop offset="0%" stop-color="#ffeb3b"/><stop offset="40%" stop-color="#ff9800"/><stop offset="100%" stop-color="#1a1a1a"/></radialGradient></defs>
+                            <rect width="200" height="200" fill="#1a1a1a"/>
+                            <circle cx="100" cy="100" r="70" fill="url(#g4g)" opacity="0.8"/>
+                            <path d="M 40 100 L 55 70 L 70 130 L 85 70 L 100 130 L 115 70 L 130 130 L 145 70 L 160 100" stroke="#fff" stroke-width="3" fill="none" stroke-linejoin="round"/>
+                            <path d="M 40 100 L 55 70 L 70 130 L 85 70 L 100 130 L 115 70 L 130 130 L 145 70 L 160 100" stroke="#ffeb3b" stroke-width="1.5" fill="none" stroke-linejoin="round" opacity="0.9"/>
+                        </svg>
+                    </div>
+                    <div class="caption">🔥 Угольная нить накала</div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="img-box">
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs><radialGradient id="g5g" cx="50%" cy="50%"><stop offset="0%" stop-color="#fff"/><stop offset="30%" stop-color="#9ce5ff"/><stop offset="70%" stop-color="#3f51b5"/><stop offset="100%" stop-color="#1a1a1a"/></radialGradient></defs>
+                            <rect width="200" height="200" fill="#1a1a1a"/>
+                            <circle cx="100" cy="100" r="80" fill="url(#g5g)" opacity="0.7"/>
+                            <polygon points="60,30 75,30 85,95 70,95" fill="#424242"/>
+                            <polygon points="125,30 140,30 130,95 115,95" fill="#424242"/>
+                            <path d="M 78 95 Q 100 130 122 95" stroke="#fff9c4" stroke-width="4" fill="none"/>
+                            <path d="M 78 95 Q 100 130 122 95" stroke="#ffeb3b" stroke-width="2" fill="none"/>
+                            <rect x="55" y="20" width="30" height="10" fill="#212121"/>
+                            <rect x="115" y="20" width="30" height="10" fill="#212121"/>
+                            <rect x="90" y="170" width="20" height="20" fill="#212121"/>
+                        </svg>
+                    </div>
+                    <div class="caption">⚡ Дуговая лампа</div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="img-box">
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs><radialGradient id="g6g" cx="50%" cy="50%"><stop offset="0%" stop-color="#fffde7"/><stop offset="50%" stop-color="#ffb300"/><stop offset="100%" stop-color="#1a1a1a"/></radialGradient></defs>
+                            <rect width="200" height="200" fill="#1a1a1a"/>
+                            <circle cx="100" cy="100" r="85" fill="url(#g6g)" opacity="0.6"/>
+                            <path d="M 40 100 Q 50 60 60 100 Q 70 60 80 100 Q 90 60 100 100 Q 110 60 120 100 Q 130 60 140 100 Q 150 60 160 100" stroke="#fff" stroke-width="3" fill="none"/>
+                            <path d="M 40 100 Q 50 60 60 100 Q 70 60 80 100 Q 90 60 100 100 Q 110 60 120 100 Q 130 60 140 100 Q 150 60 160 100" stroke="#ffeb3b" stroke-width="1.5" fill="none"/>
+                            <line x1="40" y1="100" x2="20" y2="100" stroke="#616161" stroke-width="3"/>
+                            <line x1="160" y1="100" x2="180" y2="100" stroke="#616161" stroke-width="3"/>
+                        </svg>
+                    </div>
+                    <div class="caption">🌟 Вольфрамовая нить</div>
+                </div>
+
+            </div>
+
+            <h2>Интересные факты</h2>
+            <div class="facts-grid">
+                <div class="fact-card"><div class="fact-icon">💡</div><span class="fact-number">1874</span><div class="fact-label">Год получения патента Лодыгиным</div></div>
+                <div class="fact-card"><div class="fact-icon">🔬</div><span class="fact-number">6000</span><div class="fact-label">Опытов провёл Эдисон</div></div>
+                <div class="fact-card"><div class="fact-icon">⏱️</div><span class="fact-number">40 мин</span><div class="fact-label">Горела первая лампа Лодыгина</div></div>
+                <div class="fact-card"><div class="fact-icon">💰</div><span class="fact-number">$2.5</span><div class="fact-label">Стоимость первой лампочки Эдисона</div></div>
+                <div class="fact-card"><div class="fact-icon">🌡️</div><span class="fact-number">3000°C</span><div class="fact-label">Температура накала нити</div></div>
+                <div class="fact-card"><div class="fact-icon">📜</div><span class="fact-number">1093</span><div class="fact-label">Патента у Эдисона</div></div>
+            </div>
+        </div>
+
+        <!-- ============================================= -->
+        <!-- РАЗДЕЛ 2: МАШИНОСТРОЕНИЕ                      -->
+        <!-- ============================================= -->
+        <div id="mach" class="section">
+            <h1>Машиностроение: история развития</h1>
+
+            <div class="infobox">
+                <h3>⚙️ Машиностроение</h3>
+                <div class="img-box">
+                    <!-- SVG: шестерни -->
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="m-gear1" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#90a4ae"/>
+                                <stop offset="100%" stop-color="#546e7a"/>
+                            </linearGradient>
+                            <linearGradient id="m-gear2" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#ffb74d"/>
+                                <stop offset="100%" stop-color="#e65100"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- большая шестерня -->
+                        <g transform="translate(80,110)">
+                            <circle r="45" fill="url(#m-gear1)" stroke="#263238" stroke-width="2"/>
+                            <circle r="15" fill="#eceff1" stroke="#263238" stroke-width="2"/>
+                            <g fill="url(#m-gear1)" stroke="#263238" stroke-width="1">
+                                <rect x="-6" y="-52" width="12" height="14"/>
+                                <rect x="-6" y="38" width="12" height="14"/>
+                                <rect x="-52" y="-6" width="14" height="12"/>
+                                <rect x="38" y="-6" width="14" height="12"/>
+                                <rect x="-6" y="-52" width="12" height="14" transform="rotate(45)"/>
+                                <rect x="-6" y="38" width="12" height="14" transform="rotate(45)"/>
+                                <rect x="-52" y="-6" width="14" height="12" transform="rotate(45)"/>
+                                <rect x="38" y="-6" width="14" height="12" transform="rotate(45)"/>
+                            </g>
+                        </g>
+                        <!-- малая шестерня -->
+                        <g transform="translate(148,75)">
+                            <circle r="28" fill="url(#m-gear2)" stroke="#263238" stroke-width="2"/>
+                            <circle r="9" fill="#eceff1" stroke="#263238" stroke-width="2"/>
+                            <g fill="url(#m-gear2)" stroke="#263238" stroke-width="1">
+                                <rect x="-4" y="-33" width="8" height="10"/>
+                                <rect x="-4" y="23" width="8" height="10"/>
+                                <rect x="-33" y="-4" width="10" height="8"/>
+                                <rect x="23" y="-4" width="10" height="8"/>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                <table>
+                    <tr><td>Отрасль:</td><td>Промышленность</td></tr>
+                    <tr><td>Первые станки:</td><td>XV век</td></tr>
+                    <tr><td>Промышленная революция:</td><td>XVIII век</td></tr>
+                    <tr><td>Ключевое изобретение:</td><td>Паровой двигатель</td></tr>
+                    <tr><td>Основоположник:</td><td>Джеймс Уатт</td></tr>
+                </table>
+            </div>
+
+            <h2>Введение</h2>
+            <p><b>Машиностроение</b> — это <em>отрасль промышленности</em>, которая производит машины, оборудование, станки, инструменты и транспортные средства. Именно машиностроение стало <b>двигателем промышленной революции</b> XVIII–XIX веков и превратило ручной труд в машинный.</p>
+            <p>История машиностроения началась с простых механизмов — рычагов, блоков и водяных колёс, — а к XIX веку превратилась в <b>мощную индустрию</b>, способную строить паровозы, пароходы и целые заводы. Ключевую роль в этом сыграли изобретения парового двигателя и <em>токарного станка с суппортом</em>.</p>
+
+            <h2>Хронология развития</h2>
+            <div class="timeline">
+                <div class="timeline-item"><div class="year">⚙️ 1712</div><div class="event"><b>Томас Ньюкомен</b> (Англия) построил первый практически применимый <em>паровой насос</em> для откачки воды из шахт.</div></div>
+                <div class="timeline-item"><div class="year">⚙️ 1765</div><div class="event"><b>Иван Ползунов</b> (Россия) создал первый в мире <em>двухцилиндровый паровой двигатель</em> непрерывного действия для заводских нужд.</div></div>
+                <div class="timeline-item"><div class="year">⚙️ 1775</div><div class="event"><b>Джеймс Уатт</b> (Шотландия) запатентовал <em>универсальный паровой двигатель</em> с отдельным конденсатором — он стал основой всей промышленности XIX века.</div></div>
+                <div class="timeline-item"><div class="year">🔧 1797</div><div class="event"><b>Генри Модсли</b> (Англия) изобрёл <em>суппорт</em> для токарного станка — это позволило делать детали с высокой точностью и стало основой современного станкостроения.</div></div>
+                <div class="timeline-item"><div class="year">🚂 1804</div><div class="event"><b>Ричард Тревитик</b> (Англия) построил <em>первый паровоз</em>, который двигался по рельсам и перевозил грузы.</div></div>
+                <div class="timeline-item"><div class="year">🔧 1817</div><div class="event"><b>Джеймс Фокс</b> (Англия) запатентовал <em>фрезерный станок</em> — новую эпоху в обработке металла.</div></div>
+                <div class="timeline-item"><div class="year">🔨 1842</div><div class="event"><b>Джеймс Несмит</b> (Шотландия) создал <em>паровой молот</em>, который позволил обрабатывать крупные металлические детали.</div></div>
+                <div class="timeline-item"><div class="year">🤖 1873</div><div class="event"><b>Кристофер Спенсер</b> (США) создал <em>автоматический токарный станок</em> — начало автоматизации производства.</div></div>
+            </div>
+
+            <h2>Ключевые изобретатели</h2>
+            <div class="inventors-grid">
+                <div class="inventor-card">
+                    <div class="portrait">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs><linearGradient id="mp1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e8eaf6"/><stop offset="100%" stop-color="#7986cb"/></linearGradient></defs>
+                            <rect width="100" height="100" fill="url(#mp1)"/>
+                            <circle cx="50" cy="42" r="20" fill="#ffcc80"/>
+                            <path d="M 30 34 Q 50 16 70 34 Q 66 24 50 24 Q 34 24 30 34 Z" fill="#757575"/>
+                            <path d="M 18 100 Q 18 72 50 72 Q 82 72 82 100 Z" fill="#37474f"/>
+                            <text x="50" y="96" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="bold">Д.У.</text>
+                        </svg>
+                    </div>
+                    <h4>Джеймс Уатт</h4>
+                    <div class="years">1736–1819</div>
+                    <p>Шотландский инженер и изобретатель, создатель <b>универсального парового двигателя</b>. Его машина сделала пар основой промышленности и привела к промышленной революции.</p>
+                </div>
+                <div class="inventor-card">
+                    <div class="portrait">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs><linearGradient id="mp2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff3e0"/><stop offset="100%" stop-color="#ffb74d"/></linearGradient></defs>
+                            <rect width="100" height="100" fill="url(#mp2)"/>
+                            <circle cx="50" cy="42" r="20" fill="#ffcc80"/>
+                            <path d="M 32 35 Q 50 20 68 35 Q 65 28 50 28 Q 35 28 32 35 Z" fill="#5d4037"/>
+                            <path d="M 18 100 Q 18 72 50 72 Q 82 72 82 100 Z" fill="#263238"/>
+                            <text x="50" y="96" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="bold">Г.М.</text>
+                        </svg>
+                    </div>
+                    <h4>Генри Модсли</h4>
+                    <div class="years">1771–1831</div>
+                    <p>Английский механик и изобретатель. Создал <b>суппорт для токарного станка</b> — устройство, которое позволило изготавливать детали с высокой точностью и открыло эпоху машиностроения.</p>
+                </div>
+                <div class="inventor-card">
+                    <div class="portrait">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs><linearGradient id="mp3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e8f5e9"/><stop offset="100%" stop-color="#81c784"/></linearGradient></defs>
+                            <rect width="100" height="100" fill="url(#mp3)"/>
+                            <circle cx="50" cy="42" r="20" fill="#ffcc80"/>
+                            <path d="M 30 34 Q 50 18 70 34 Q 66 24 50 24 Q 34 24 30 34 Z" fill="#6d4c41"/>
+                            <path d="M 18 100 Q 18 72 50 72 Q 82 72 82 100 Z" fill="#37474f"/>
+                            <text x="50" y="96" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="bold">И.П.</text>
+                        </svg>
+                    </div>
+                    <h4>Иван Ползунов</h4>
+                    <div class="years">1728–1766</div>
+                    <p>Русский изобретатель, создатель <b>первого в мире двухцилиндрового парового двигателя</b>. Его машина работала непрерывно и приводила в движение заводские механизмы.</p>
+                </div>
+            </div>
+
+            <h2>Как работает паровой двигатель</h2>
+            <p>Принцип работы паровой машины <em>гениально прост</em>:</p>
+            <ol>
+                <li><b>Топливо сжигается</b> в топке, вода в котле превращается в пар.</li>
+                <li><b>Пар под давлением</b> поступает в цилиндр и толкает поршень.</li>
+                <li><b>Поршень через шатун</b> вращает маховик — он превращает возвратно-поступательное движение во вращательное.</li>
+                <li><b>Маховик приводит в движение</b> станки, колёса паровоза или генератор.</li>
+            </ol>
+            <p>Именно паровой двигатель <b>освободил человечество от привязки к воде и ветру</b> и позволил строить заводы где угодно.</p>
+
+            <h2>Галерея изображений</h2>
+            <div class="gallery-grid">
+
+                <div class="gallery-item">
+                    <div class="img-box">
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs><radialGradient id="mg1" cx="50%" cy="50%"><stop offset="0%" stop-color="#eceff1"/><stop offset="100%" stop-color="#90a4ae"/></radialGradient></defs>
+                            <rect width="200" height="200" fill="url(#mg1)"/>
+                            <g transform="translate(90,100)">
+                                <circle r="45" fill="#607d8b" stroke="#263238" stroke-width="2"/>
+                                <circle r="15" fill="#eceff1" stroke="#263238" stroke-width="2"/>
+                                <g fill="#607d8b" stroke="#263238" stroke-width="1">
+                                    <rect x="-6" y="-52" width="12" height="14"/>
+                                    <rect x="-6" y="38" width="12" height="14"/>
+                                    <rect x="-52" y="-6" width="14" height="12"/>
+                                    <rect x="38" y="-6" width="14" height="12"/>
+                                    <rect x="-6" y="-52" width="12" height="14" transform="rotate(45)"/>
+                                    <rect x="-6" y="38" width="12" height="14" transform="rotate(45)"/>
+                                    <rect x="-52" y="-6" width="14" height="12" transform="rotate(45)"/>
+                                    <rect x="38" y="-6" width="14" height="12" transform="rotate(45)"/>
+                                </g>
+                            </g>
+                            <g transform="translate(158,65)">
+                                <circle r="26" fill="#ffb74d" stroke="#263238" stroke-width="2"/>
+                                <circle r="9" fill="#eceff1" stroke="#263238" stroke-width="2"/>
+                                <g fill="#ffb74d" stroke="#263238" stroke-width="1">
+                                    <rect x="-4" y="-31" width="8" height="10"/>
+                                    <rect x="-4" y="21" width="8" height="10"/>
+                                    <rect x="-31" y="-4" width="10" height="8"/>
+                                    <rect x="21" y="-4" width="10" height="8"/>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="caption">⚙️ Шестерни — основа любой машины</div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="img-box">
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="200" height="200" fill="#37474f"/>
+                            <rect x="20" y="130" width="90" height="40" fill="#78909c" stroke="#263238" stroke-width="2" rx="4"/>
+                            <circle cx="40" cy="150" r="6" fill="#ffb74d"/>
+                            <circle cx="70" cy="150" r="6" fill="#ffb74d"/>
+                            <rect x="115" y="115" width="50" height="30" fill="#90a4ae" stroke="#263238" stroke-width="2"/>
+                            <line x1="140" y1="130" x2="175" y2="130" stroke="#263238" stroke-width="3"/>
+                            <circle cx="165" cy="70" r="35" fill="none" stroke="#b0bec5" stroke-width="5"/>
+                            <circle cx="165" cy="70" r="6" fill="#b0bec5"/>
+                            <line x1="135" y1="70" x2="195" y2="70" stroke="#b0bec5" stroke-width="3"/>
+                            <line x1="165" y1="40" x2="165" y2="100" stroke="#b0bec5" stroke-width="3"/>
+                            <line x1="150" y1="130" x2="180" y2="90" stroke="#ff9800" stroke-width="3"/>
+                        </svg>
+                    </div>
+                    <div class="caption">🔥 Паровой двигатель</div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="img-box">
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="200" height="200" fill="#455a64"/>
+                            <rect x="20" y="130" width="160" height="20" fill="#78909c" stroke="#263238" stroke-width="2"/>
+                            <rect x="20" y="80" width="40" height="50" fill="#90a4ae" stroke="#263238" stroke-width="2"/>
+                            <circle cx="70" cy="105" r="18" fill="#607d8b" stroke="#263238" stroke-width="2"/>
+                            <circle cx="70" cy="105" r="6" fill="#37474f"/>
+                            <rect x="88" y="98" width="50" height="14" fill="#ffb74d" stroke="#263238" stroke-width="1"/>
+                            <rect x="140" y="90" width="30" height="40" fill="#90a4ae" stroke="#263238" stroke-width="2"/>
+                            <rect x="100" y="115" width="15" height="15" fill="#e67e22"/>
+                            <rect x="30" y="150" width="15" height="30" fill="#546e7a"/>
+                            <rect x="155" y="150" width="15" height="30" fill="#546e7a"/>
+                        </svg>
+                    </div>
+                    <div class="caption">🔧 Токарный станок</div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="img-box">
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="200" height="200" fill="#37474f"/>
+                            <rect x="30" y="30" width="20" height="140" fill="#78909c"/>
+                            <rect x="150" y="30" width="20" height="140" fill="#78909c"/>
+                            <rect x="30" y="30" width="140" height="15" fill="#78909c"/>
+                            <rect x="70" y="55" width="60" height="30" fill="#90a4ae" stroke="#263238" stroke-width="2"/>
+                            <line x1="100" y1="45" x2="100" y2="55" stroke="#263238" stroke-width="4"/>
+                            <polygon points="60,155 140,155 120,175 80,175" fill="#607d8b" stroke="#263238" stroke-width="2"/>
+                            <rect x="70" y="175" width="60" height="15" fill="#546e7a"/>
+                        </svg>
+                    </div>
+                    <div class="caption">🔨 Паровой молот</div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="img-box">
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="200" height="200" fill="#2c3e50"/>
+                            <rect x="40" y="80" width="120" height="60" fill="#455a64" stroke="#1a252f" stroke-width="2" rx="4"/>
+                            <rect x="120" y="60" width="40" height="80" fill="#546e7a" stroke="#1a252f" stroke-width="2"/>
+                            <rect x="130" y="75" width="20" height="20" fill="#ffeb3b" opacity="0.7"/>
+                            <rect x="50" y="50" width="20" height="30" fill="#37474f"/>
+                            <rect x="45" y="45" width="30" height="10" fill="#263238"/>
+                            <circle cx="55" cy="35" r="8" fill="#b0bec5" opacity="0.6"/>
+                            <circle cx="50" cy="20" r="10" fill="#b0bec5" opacity="0.4"/>
+                            <circle cx="70" cy="150" r="20" fill="#90a4ae" stroke="#263238" stroke-width="3"/>
+                            <circle cx="70" cy="150" r="5" fill="#37474f"/>
+                            <circle cx="120" cy="150" r="20" fill="#90a4ae" stroke="#263238" stroke-width="3"/>
+                            <circle cx="120" cy="150" r="5" fill="#37474f"/>
+                            <circle cx="160" cy="150" r="14" fill="#90a4ae" stroke="#263238" stroke-width="3"/>
+                            <circle cx="160" cy="150" r="4" fill="#37474f"/>
+                            <rect x="20" y="168" width="160" height="5" fill="#607d8b"/>
+                        </svg>
+                    </div>
+                    <div class="caption">🚂 Паровоз</div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="img-box">
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="200" height="200" fill="#455a64"/>
+                            <rect x="40" y="160" width="120" height="15" fill="#78909c" stroke="#263238" stroke-width="2"/>
+                            <rect x="90" y="60" width="20" height="100" fill="#90a4ae" stroke="#263238" stroke-width="2"/>
+                            <rect x="50" y="50" width="100" height="30" fill="#78909c" stroke="#263238" stroke-width="2" rx="4"/>
+                            <circle cx="130" cy="65" r="12" fill="#607d8b" stroke="#263238" stroke-width="2"/>
+                            <rect x="75" y="80" width="15" height="20" fill="#546e7a"/>
+                            <polygon points="78,100 87,100 82,125 80,125" fill="#b0bec5"/>
+                            <rect x="60" y="125" width="60" height="8" fill="#607d8b" stroke="#263238" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="caption">🔩 Сверлильный станок</div>
+                </div>
+
+            </div>
+
+            <h2>Интересные факты</h2>
+            <div class="facts-grid">
+                <div class="fact-card"><div class="fact-icon">⚙️</div><span class="fact-number">1712</span><div class="fact-label">Первый паровой насос Ньюкомена</div></div>
+                <div class="fact-card"><div class="fact-icon">🔥</div><span class="fact-number">1765</span><div class="fact-label">Двухцилиндровый двигатель Ползунова</div></div>
+                <div class="fact-card"><div class="fact-icon">🔧</div><span class="fact-number">1797</span><div class="fact-label">Суппорт Модсли — начало станкостроения</div></div>
+                <div class="fact-card"><div class="fact-icon">🚂</div><span class="fact-number">1804</span><div class="fact-label">Первый паровоз Тревитика</div></div>
+                <div class="fact-card"><div class="fact-icon">🔨</div><span class="fact-number">1842</span><div class="fact-label">Паровой молот Несмита</div></div>
+                <div class="fact-card"><div class="fact-icon">🤖</div><span class="fact-number">1873</span><div class="fact-label">Первый автоматический станок</div></div>
+            </div>
+        </div>
+
+    </div>
+
+    <a href="#top" class="back-to-top" title="Наверх">↑</a>
+
+    <script>
+        // Переключение между разделами
+        const tabs = document.querySelectorAll('.tab');
+        const sections = document.querySelectorAll('.section');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.tab;
+                tabs.forEach(t => t.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(target).classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
